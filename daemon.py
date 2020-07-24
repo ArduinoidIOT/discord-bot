@@ -1,17 +1,11 @@
 from discord.ext.commands import Bot
-import discord
-import asyncio
-import requests
-import os
-
 bot = Bot("!")
 
 
 async def get_trashcan_emoji(ctx):
-    trashcan = None
     for emoji in ctx.guild.emojis:
         if emoji.name == 'trashcan':
-            trashcan = emoji
+            return emoji
 
 
 def blocking_io(num):
@@ -33,11 +27,6 @@ async def xkcd(ctx, num=''):
     except:
         msg = await ctx.channel.send('**Sorry, XKCD comic not found**')
     await msg.add_reaction(trashcan)
-
-    def check(reaction, user):
-        return user == ctx.author and reaction.emoji == trashcan
-
-    await bot.wait_for('reaction_add', check=check)
     await msg.delete()
 
 
