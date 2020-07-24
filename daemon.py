@@ -2,6 +2,7 @@ from discord.ext.commands import Bot
 import discord
 import asyncio
 import requests
+import os
 
 bot = Bot("!")
 
@@ -34,44 +35,10 @@ async def xkcd(ctx, num=''):
     await msg.add_reaction(trashcan)
 
     def check(reaction, user):
-        return user == message.author and reaction.emoji == trashcan
+        return user == ctx.author and reaction.emoji == trashcan
 
-    try:
-        await bot.wait_for('reaction_add', check=check)
-        await msg.delete()
-
-
-@bot.event
-async def on_message(message: discord.Message):
-    if message.author == bot.user:
-        return
-    trashcan = None
-    for i in message.guild.emojis:
-        if i.name == 'trashcan':
-            trashcan = i
-    if message.content.startswith('!xkcd'):
-        data = message.content.split(" ")
-        dt = []
-        for i in data:
-            if i:
-                dt.append(i)
-        dt.append('')
-        loop = asyncio.get_running_loop()
-        try:
-            msg = await message.channel.send(await loop.run_in_executor(
-                None, blocking_io, dt[1]))
-        except:
-            msg = await message.channel.send('**Sorry, XKCD comic not found**')
-        await msg.add_reaction(trashcan)
-
-        def check(reaction, user):
-            return user == message.author and reaction.emoji == trashcan
-
-        try:
-            await bot.wait_for('reaction_add', check=check)
-            await msg.delete()
-        except asyncio.TimeoutError:
-            await message.channel.send()
+    await bot.wait_for('reaction_add', check=check)
+    await msg.delete()
 
 
-bot.run('NzMyNTk4MTMyNjYzMjU1MTIy.XxWa-w._SjbEkKEjV18ILxJtsy-loz0S1s')
+bot.run(os.environ.get('DISCORD_TOKEN'))
