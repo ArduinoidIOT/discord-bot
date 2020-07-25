@@ -1,16 +1,27 @@
 import asyncio
-import requests
 from discord.ext import commands
 from discord import Embed, Color, RawReactionActionEvent
 from .utils import *
+from pycurl import Curl
+from json import load
+import certifi
+from io import BytesIO
 
 
 def blocking_io(num):  # TODO: Use pycurl
-    return requests.get(f'https://xkcd.com/{num}/info.0.json').json()['img']
+    buf = BytesIO()
+    c = Curl()
+    c.setopt(c.URL, f'https://xkcd.com/{num}/info.0.json')
+    c.setopt(c.WRITEDATA, buf)
+    c.setopt(c.CAINFO, certifi.where())
+    c.perform()
+    c.close()
+    buf.seek(0)
+    return load(buf)['img']
 
 
 class XKCDCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @commands.command()
@@ -26,6 +37,7 @@ class XKCDCog(commands.Cog):
             msg = await ctx.channel.send(embed=
                                          Embed(description='**Sorry, XKCD comic not found**',
                                                color=Color(0x0000ff)).set_footer(text=ctx.author.mention))
+            raise
 
         await msg.add_reaction(trashcan)
 
@@ -33,6 +45,6 @@ class XKCDCog(commands.Cog):
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         mention = self.bot.get_user(payload.user_id).mention
         message = await get_message(self.bot, payload.message_id, payload.channel_id)
-        print(payload.emoji.name)
-        if message.embeds[0].footer.text == mention and payload.emoji.name == 'trashcan':
+        if message.embeds[
+            0].footer.text == mention and payload.emoji.name == 'trashcan' and self.bot.user == message.author:
             await message.delete()
