@@ -1,7 +1,6 @@
 from discord.ext.commands import Bot
 from os import environ
 from cogs import XKCDCog
-from discord.ext import commands
 
 bot = Bot("!")
 
