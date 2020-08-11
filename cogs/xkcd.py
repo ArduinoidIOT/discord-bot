@@ -17,7 +17,7 @@ def blocking_io(num):  # TODO: Use pycurl
     c.perform()
     c.close()
     buf.seek(0)
-    return load(buf)['img']
+    return load(buf)
 
 
 class XKCDCog(commands.Cog):
@@ -29,8 +29,9 @@ class XKCDCog(commands.Cog):
         trashcan = await get_trashcan(ctx)
         loop = asyncio.get_running_loop()
         try:
-            embed = Embed(color=Color(0xff0000))
-            embed.set_image(url=(await loop.run_in_executor(None, blocking_io, num)))
+            data = await loop.run_in_executor(None, blocking_io, num)
+            embed = Embed(color=Color(0xff0000), description=data['alt'])
+            embed.set_image(url=data['img'])
             embed.set_footer(text=ctx.author.mention)
             msg = await ctx.send(embed=embed)
         except:
