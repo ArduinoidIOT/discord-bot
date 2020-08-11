@@ -38,7 +38,6 @@ class XKCDCog(commands.Cog):
             msg = await ctx.channel.send(embed=
                                          Embed(description='**Sorry, XKCD comic not found**',
                                                color=Color(0x0000ff)).set_footer(text=ctx.author.mention))
-            raise
 
         await msg.add_reaction(trashcan)
 
