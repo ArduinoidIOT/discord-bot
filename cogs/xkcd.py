@@ -30,7 +30,7 @@ class XKCDCog(commands.Cog):
         loop = asyncio.get_running_loop()
         try:
             data = await loop.run_in_executor(None, blocking_io, num)
-            embed = Embed(color=Color(0xff0000), description=data['alt'])
+            embed = Embed(color=Color(0xff0000), description=data['alt'], title=data['title'])
             embed.set_image(url=data['img'])
             embed.set_footer(text=ctx.author.mention)
             msg = await ctx.send(embed=embed)
