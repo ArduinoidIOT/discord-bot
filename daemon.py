@@ -1,6 +1,6 @@
 from discord.ext.commands import Bot
 from os import environ
-from cogs import XKCDCog
+from cogs import XKCDCog, MoneyManagerCog
 
 bot = Bot("!")
 
@@ -11,6 +11,7 @@ async def on_ready():
 
 
 bot.add_cog(XKCDCog(bot))
+bot.add_cog(MoneyManagerCog())
 
 
 bot.run(environ.get('DISCORD_TOKEN'))
